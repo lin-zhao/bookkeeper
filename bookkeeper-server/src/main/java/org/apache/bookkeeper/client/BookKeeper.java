@@ -859,6 +859,12 @@ public class BookKeeper implements org.apache.bookkeeper.client.api.BookKeeper {
     public void asyncCreateLedger(final int ensSize, final int writeQuorumSize, final int ackQuorumSize,
                                   final DigestType digestType, final byte[] passwd,
                                   final CreateCallback cb, final Object ctx, final Map<String, byte[]> customMetadata) {
+        if (ensSize <= 0) {
+            throw new IllegalArgumentException("Ensemble size must be larger than 0");
+        }
+        if (writeQuorumSize <= 0) {
+            throw new IllegalArgumentException("Write quorum must be larger than 0");
+        }
         if (writeQuorumSize < ackQuorumSize) {
             throw new IllegalArgumentException("Write quorum must be larger than ack quorum");
         }

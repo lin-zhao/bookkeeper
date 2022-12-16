@@ -231,6 +231,24 @@ public class TestLedgerAllocator extends TestDistributedLogBase {
     }
 
     @Test(timeout = 60000)
+    public void testAllocatorWithoutAnyBookies() throws Exception {
+        String allocationPath = "/allocator-without-any-bookies";
+
+        DistributedLogConfiguration confLocal = new DistributedLogConfiguration();
+        confLocal.addConfiguration(conf);
+        confLocal.setEnsembleSize(numBookies * 0);
+        confLocal.setWriteQuorumSize(numBookies * 0);
+
+        SimpleLedgerAllocator allocator1 = createAllocator(allocationPath, confLocal);
+        try {
+            allocator1.allocate();
+            fail("Should fail allocating ledger if ensemble and write quorum are set to 0.");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
+    }
+
+    @Test(timeout = 60000)
     public void testSuccessAllocatorShouldDeleteUnusedledger() throws Exception {
         String allocationPath = "/allocation-delete-unused-ledger";
         zkc.get().create(allocationPath, new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
